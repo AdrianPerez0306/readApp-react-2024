@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { authorService } from "../../service/authorService";
 import { AuthorBook } from "../../domain/AuthorJSON";
 import { LanguageCheckbox } from '../BookCreation/LanguageCheckbok/LanguageCheckbox';
+import { SaveCancelButton } from "../FolderButtons/SaveCancelButton/SaveCancel";
 
 export const BookDetail = ({
     editable,
@@ -16,7 +17,6 @@ export const BookDetail = ({
     const [book, setBook] = useState<BookListDetail>(new BookListDetail());
     const [author, setAuthor] = useState<AuthorBook>(new AuthorBook());
     const [authorsSystemList, setAuthorsSystemList] = useState<AuthorBook[]>([]);
-    const [nativeLanguage, setNativeLanguage] = useState<string>(author.nacionalidad);
     const [languages, setLanguages] = useState<string[]>([]);
     const params = useParams();
 
@@ -63,17 +63,27 @@ export const BookDetail = ({
         const { name, type } = event.target;
         const value = type === "checkbox" ? (event.target as HTMLInputElement).checked : event.target.value;
 
-        setBook((prevBook) => ({
-            ...prevBook,
-            [name]: value,
-        }));
+        const updatedBook = { ...book, [name]: value };
+        setBook(Object.assign(new BookListDetail(), updatedBook));
+        // setBook((prevBook) => ({
+        //     ...prevBook,
+        //     [name]: value,
+        // }));
     };
 
     const handleLanguageChange = (selectedLanguages: string[]) => {
-        setBook((prevBook) => ({
-            ...prevBook,
-            translations: selectedLanguages,
-        }));
+            const updatedBook = { ...book, translations: selectedLanguages };
+            setBook(Object.assign(new BookListDetail(), updatedBook));        
+    };
+
+    const confirm = async () => {
+        try {
+            const bookJson = book.toJson(book, author); // Convertimos a JSON
+            await bookService.editBook(bookJson);       // Llama a bookService con el JSON generado
+            console.log("Libro guardado correctamente.");
+        } catch (error) {
+            console.error("Error al guardar el libro:", error);
+        }
     };
 
     useEffect(() => {
@@ -85,15 +95,14 @@ export const BookDetail = ({
     return (
         <>
             {(
-                <Box display="flex" flexDirection="column" justifyContent="space-between"
+                <><Box display="flex" flexDirection="column" justifyContent="space-between"
                     alignItems="center" gap={3} sx={{ width: 500, maxWidth: '100%' }} padding={5}>
                     <TextField fullWidth
                         label="Title"
                         onChange={editBook}
                         name="title"
                         disabled={!editable}
-                        value={book.title || ''}
-                    />
+                        value={book.title || ''} />
                     <FormControl fullWidth>
                         <InputLabel id="author-select-label">Author</InputLabel>
                         <Select
@@ -101,7 +110,7 @@ export const BookDetail = ({
                             id="nationality-select"
                             name="author"
                             disabled={!editable}
-                            value={author.id.toString()}  
+                            value={author.id.toString()}
                             onChange={handleChangeSelect}
                         >
                             {authorsSystemList.map(author => (
@@ -117,9 +126,8 @@ export const BookDetail = ({
                         onChange={editBook}
                         name="numberOfEditions"
                         disabled={!editable}
-                        value={book.numberOfEditions || ''}
-                    />
-                    <Box display="flex" flexDirection="row" gap={3} sx={{ width: "100%" }} >
+                        value={book.numberOfEditions || ''} />
+                    <Box display="flex" flexDirection="row" gap={3} sx={{ width: "100%" }}>
                         <TextField
                             label="Number of pages"
                             variant="outlined"
@@ -143,20 +151,15 @@ export const BookDetail = ({
                         onChange={editBook}
                         name="weeklySales"
                         disabled={!editable}
-                        value={book.weeklySales || ''}
-                    />
+                        value={book.weeklySales || ''} />
                     <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={checkedComplex}
-                                onChange={handleChangeCheckComplex}
-                                name="complex"
-                                disabled={!editable}
-                            />
-                        }
-                        label="complex to read"
-                    />
-                    
+                        control={<Checkbox
+                            checked={checkedComplex}
+                            onChange={handleChangeCheckComplex}
+                            name="complex"
+                            disabled={!editable} />}
+                        label="complex to read" />
+
                     <TextField
                         label="Native language"
                         name="nativeLanguage"
@@ -166,8 +169,9 @@ export const BookDetail = ({
                     <LanguageCheckbox
                         fullLanguageList={book.translations}
                         nativeLanguage={author.nacionalidad}
-                        onChange={handleLanguageChange}/>
+                        onChange={handleLanguageChange} />
                 </Box>
+                <SaveCancelButton onClick={confirm} isBook={true} editable={editable}></SaveCancelButton></>
             )}
         </>
     );

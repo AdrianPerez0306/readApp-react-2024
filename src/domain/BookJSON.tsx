@@ -91,19 +91,31 @@ export class BookListDetail {
         
     }
 
+    toJson(dataBook: BookListDetail, dataAuthor: AuthorBook): BookListDetailJSON {
+        return {
+            id: dataBook.id,
+            title: dataBook.title,
+            author: {
+                id: dataAuthor.id,
+                nombre: dataAuthor.nombre,
+                apellido: dataAuthor.apellido,
+                nacionalidad: dataAuthor.nacionalidad,
+            },
+            numberOfPages: dataBook.numberOfPages,
+            numberOfWords: dataBook.numberOfWords,
+            translations: dataBook.translations,
+            bestSeller: dataBook.bestSeller,
+            challenging: dataBook.challenging,
+            image: dataBook.image,
+            numberOfEditions: dataBook.numberOfEditions,
+            weeklySales: dataBook.weeklySales,
+            complex: dataBook.complex,
+        };
+    }
+    
+
 }
 
-// export type CreateBookJSON = {
-//     id: number;
-//     title: string;
-//     author: string;
-//     numberOfPages: number;
-//     numberOfWords: number;
-//     translations: string[];
-//     bestSeller: boolean;
-//     challenging: boolean;
-// }
-
-export const BookList = new BookListDetail()
+export const BookList = new BookListDetail();
 
 export const bookJson = new Book();

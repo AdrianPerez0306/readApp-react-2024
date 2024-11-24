@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { authorService } from "../../../service/authorService";
-import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
 
 export const LanguageCheckbox = ({ 
     fullLanguageList, 
@@ -62,21 +62,27 @@ export const LanguageCheckbox = ({
 
     return (
         <Box>
-            <FormGroup sx={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
-                {Object.entries(languagesMap).map(([language, isChecked]) => (
-                    <FormControlLabel
-                        key={language}
-                        control={
-                            <Checkbox
-                                checked={isChecked}
-                                onChange={handleChange}
-                                name={language}
-                                disabled={language === nativeLanguage}
-                            />
-                        }
-                        label={language}
-                    />
-                ))}
+            <FormGroup>
+                <Box
+                    display="grid"
+                    gridTemplateColumns="repeat(2, 1fr)"
+                    gap={1}
+                >
+                    {Object.entries(languagesMap).map(([language, isChecked]) => (
+                        <FormControlLabel
+                            key={language}
+                            control={
+                                <Checkbox
+                                    checked={isChecked}
+                                    onChange={handleChange}
+                                    name={language}
+                                    disabled={language === nativeLanguage}
+                                />
+                            }
+                            label={language}
+                        />
+                    ))}
+                </Box>
             </FormGroup>
         </Box>
     );

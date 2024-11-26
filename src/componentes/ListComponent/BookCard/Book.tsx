@@ -123,7 +123,7 @@ export const BookComponent = ({book,onDelete}: {book: Book;onDelete: (id: number
                         {book.challenging && (
                              <IconButton
                             sx={{ height: "4rem" }}>
-                            <WhatshotOutlinedIcon sx={{ height: "100%", width: "100%", color: "yellow" }}></WhatshotOutlinedIcon>
+                            <WhatshotOutlinedIcon sx={{ height: "100%", width: "100%", color: "blue" }}></WhatshotOutlinedIcon>
                             </IconButton>
                         )}
                         </Box>

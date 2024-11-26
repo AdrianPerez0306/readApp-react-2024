@@ -76,18 +76,6 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         setChallenging(fetchedBook.challenging);
         setAuthor(fetchedAuthor);
 
-
-        // setBestseller(
-        //     fetchedBook.weeklySales > 10000 &&
-        //     fetchedBook.numberOfEditions > 2 &&
-        //     fetchedBook.translations.length > 5
-        // );
-
-        // setChallenging(
-        //     fetchedBook.numberOfPages > 600 &&
-        //     fetchedBook.complex
-        // );
-
     };
 
     const getAuthors = async () => {
@@ -98,23 +86,15 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
     const editBook = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
         const { name, value } = event.target;
     
-        // Validar el campo
         const { error, helperText } = validateField(name, value);
         setErrors((prevErrors) => ({
             ...prevErrors,
             [name]: { error, helperText }
         }));
     
-        // Actualizar el libro
         const updatedBook = { ...book, [name]: value };
         setBook(Object.assign(new BookListDetail(), updatedBook));
     };
-
-    // const editBook = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
-    //     const { name, value } = event.target;
-    //     const updatedBook = { ...book, [name]: value };
-    //     setBook(Object.assign(new BookListDetail(), updatedBook));
-    // };
     
     const editBookCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = event.target;
@@ -122,14 +102,12 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         setBook(Object.assign(new BookListDetail(), updatedBook));
     };
     
-
     const handleLanguageChange = (selectedLanguages: string[]) => {
             const updatedBook = { ...book, translations: selectedLanguages };
             setBook(Object.assign(new BookListDetail(), updatedBook));        
     };
 
     const confirmEdition = async () => {
-        // Revisa si hay errores en alguno de los campos
         const hasErrors = Object.values(errors).some(field => field.error);
 
         if (hasErrors) {
@@ -185,25 +163,14 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
     
 
     useEffect(() => {
-        setBestseller(
-            
-            book.weeklySales >= 10000 && (
-            book.numberOfEditions > 2 ||
-            book.translations.length > 5)
-        );
-    
-        setChallenging(
-            book.numberOfPages > 600 ||
-            book.complex
-        );
+        setBestseller(book.weeklySales >= 10000 && ( book.numberOfEditions > 2 || book.translations.length > 5));
+        setChallenging(book.numberOfPages > 600 || book.complex);
     }, [book.weeklySales, book.numberOfEditions, book.translations, book.numberOfPages, book.complex]);
     
 
     useEffect(() => {
         getAuthors();
-        if (params.id) getBook();
-        //if (editable) getAuthors();
-    }, [params.id]);
+        if (params.id) getBook();}, [params.id]);
 
     return (
         <>
@@ -218,7 +185,7 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                     alignItems="center" gap={3} sx={{ width: 500, maxWidth: '100%' }} padding={5}>
                     <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
                         <Box>
-                        <h4>Libros</h4>
+                        <h4>Book</h4>
                         </Box>
                         <Box display="flex" flexDirection="row">
                         {bestseller && (
@@ -229,9 +196,9 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                         )}
                         
                         {challenging && (
-                             <IconButton
+                            <IconButton
                             sx={{ height: "4rem" }}>
-                            <WhatshotOutlinedIcon sx={{ height: "100%", width: "100%", color: "yellow" }}></WhatshotOutlinedIcon>
+                            <WhatshotOutlinedIcon sx={{ height: "100%", width: "100%", color: "blue" }}></WhatshotOutlinedIcon>
                             </IconButton>
                         )}
                         </Box>

@@ -16,8 +16,8 @@ export const appTheme = (mode: boolean) => {
           default: blueGrey[900]
         }
       } : {
-        primary: { main: deepOrange[400] },
-        secondary: { main: deepOrange[300] },
+        primary: { main: deepOrange[300] },
+        secondary: { main: deepOrange[600] },
         cardColor: { main: deepOrange[100] },
         details: { main: purple[200] },
         success: { main: green[500] },

@@ -112,7 +112,7 @@ export const BookComponent = ({book,onDelete}: {book: Book;onDelete: (id: number
                     </Box>
 
                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "5rem", height: "20rem", alignItems: "center" }}>
-                        <Box display="flex" flexDirection="row">
+                        <Box display="flex" flexDirection="row" marginRight={5}>
                         {book.bestSeller && (
                             <IconButton
                             sx={{ height: "4rem" }}>

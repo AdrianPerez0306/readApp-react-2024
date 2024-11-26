@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Alert, Box, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Snackbar, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { BookListDetail } from "../../domain/BookJSON";
 import { bookService } from "../../service/bookService";
@@ -27,8 +27,16 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         weeklySales: { error: false, helperText: "" }
     });
 
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
     const params = useParams();
     const navigate = useNavigate();
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
 
     const validateField = (fieldName: string, value: string | number) => {
         let error = false;
@@ -132,10 +140,15 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         try {
             const bookJson = book.toJson(book, author);
             await bookService.editBook(bookJson);
-            console.log("Libro guardado correctamente.");
-            navigate(paths.list.book.path);
+            setSnackbarSeverity("success");
+            setSnackbarMessage("Book edited successfully!");
+            setOpenSnackbar(true);
+            setTimeout(() => navigate(`${paths.list.book.path}`), 1000);
         } catch (error) {
-            console.error("Error al guardar el libro:", error);
+            console.error("Error editing the book:", error);
+            setSnackbarSeverity("error");
+            setSnackbarMessage("Error editing the book.");
+            setOpenSnackbar(true);
         }
     };
 
@@ -156,12 +169,17 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         }
     
         try {
-            const bookCreateJson = book.toCreateJson(book, author);
-            await bookService.createBook(bookCreateJson);
-            console.log("Libro creado correctamente.");
+            const bookCreateJson = book.toCreateJson(book, author); 
+            await bookService.createBook(bookCreateJson);   
+            setSnackbarSeverity("success");
+            setSnackbarMessage("Book created successfully!");
+            setOpenSnackbar(true);
             setTimeout(() => navigate(`${paths.list.book.path}`), 1000);
         } catch (error) {
-            console.error("Error al crear el libro:", error);
+            console.error("Error creating the book:", error);
+            setSnackbarSeverity("error");
+            setSnackbarMessage("Error creating the book.");
+            setOpenSnackbar(true);
         }
     };
     
@@ -191,7 +209,11 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         <>
             {(
                 <>
-                
+                <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleCloseSnackbar}>
+                    <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} variant="filled">
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
                 <Box display="flex" flexDirection="column" justifyContent="space-between"
                     alignItems="center" gap={3} sx={{ width: 500, maxWidth: '100%' }} padding={5}>
                     <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">

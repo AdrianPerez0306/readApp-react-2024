@@ -112,8 +112,34 @@ export class BookListDetail {
             complex: dataBook.complex,
         };
     }
+
+    toCreateJson (dataBook: BookListDetail, dataAuthor: AuthorBook): BookCreateJSON {
+        return {
+            title: dataBook.title,
+            author: dataAuthor.id,
+            numberOfPages: dataBook.numberOfPages,
+            numberOfWords: dataBook.numberOfWords,
+            translations: dataBook.translations,
+            image: dataBook.image,
+            numberOfEditions: dataBook.numberOfEditions,
+            weeklySales: dataBook.weeklySales,
+            complex: dataBook.complex,
+        };
+    }
     
 
+}
+
+export type BookCreateJSON = {
+    title: string;
+    author: number;
+    numberOfPages: number;
+    numberOfWords: number;
+    translations: string[];
+    image: string;
+    numberOfEditions: number;
+    weeklySales: number;
+    complex: boolean
 }
 
 export const BookList = new BookListDetail();

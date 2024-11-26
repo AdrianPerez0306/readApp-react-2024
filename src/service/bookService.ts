@@ -1,7 +1,7 @@
 import axios from "axios";
 import { REST_SERVER_URL } from "../constants";
 import { AuthorBook } from "../domain/AuthorJSON";
-import { Book, bookJson, BookJSON, BookListDetail, BookList, BookListDetailJSON } from "../domain/BookJSON";
+import { Book, bookJson, BookJSON, BookListDetail, BookList, BookListDetailJSON, BookCreateJSON } from "../domain/BookJSON";
 
 class BookService {
     async getBooksShortData(): Promise<Book[]> {
@@ -33,8 +33,11 @@ class BookService {
     async editBook(bookJson: BookListDetailJSON): Promise<void> {
         await axios.put(`${REST_SERVER_URL}/editBook/${bookJson.id}`, bookJson);
     }    
-    
 
+    async createBook(bookJson: BookCreateJSON): Promise<void> {
+        await axios.post(`${REST_SERVER_URL}/createBook`, bookJson);
+    }   
+    
 }
 
 export const bookService = new BookService();

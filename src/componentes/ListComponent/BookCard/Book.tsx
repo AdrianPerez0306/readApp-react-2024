@@ -109,28 +109,34 @@ export const BookComponent = ({book,onDelete}: {book: Book;onDelete: (id: number
                             </Box>
                         </Box>
 
-
                     </Box>
 
                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "5rem", height: "20rem", alignItems: "center" }}>
-
+                        <Box display="flex" flexDirection="row">
                         {book.bestSeller && (
                             <IconButton
-                            sx={{ height: "5rem" }}>
+                            sx={{ height: "4rem" }}>
                             <CardMembershipRoundedIcon sx={{ height: "100%", width: "100%", color: "purple" }}></CardMembershipRoundedIcon>
                         </IconButton>
                         )}
                         
                         {book.challenging && (
                              <IconButton
-                            sx={{ height: "5rem" }}>
+                            sx={{ height: "4rem" }}>
                             <WhatshotOutlinedIcon sx={{ height: "100%", width: "100%", color: "yellow" }}></WhatshotOutlinedIcon>
                             </IconButton>
                         )}
-
+                        </Box>
+        
                         <IconButton
                             onClick={() => displayBook(book.id)}
-                            sx={{ height: "5rem", color: "black" }}>
+                            sx={{ height: "4rem",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: "50%", // Forma circular
+                                color: "black", // Color del ícono
+                                }}>
 
                             <MoreVertIcon sx={{ width: "100%", height: "100%" }} />
 
@@ -138,17 +144,30 @@ export const BookComponent = ({book,onDelete}: {book: Book;onDelete: (id: number
 
                         <IconButton
                             onClick={() => editBook(book.id)}
-                            color="success"
-                            sx={{ height: "5rem" }}>
+                            sx={{ height: "4rem",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "#417cba", // Color de fondo
+                                borderRadius: "50%", // Forma circular
+                                color: "white", // Color del ícono
+                                }}>
 
-                            <EditIcon sx={{ width: "100%", height: "100%" }} />
+                            <EditIcon sx={{ width: "100%", height: "100%"}} />
 
                         </IconButton>
 
                         <IconButton
-                            sx={{ height: "5rem%" }}
+                            sx={{ height: "4rem",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "red", // Color de fondo
+                                borderRadius: "50%", // Forma circular
+                                color: "white", // Color del ícono
+                                }}
                             onClick={() => deleteBook(book.id)}
-                            color="error">
+                            >
 
                             <DeleteIcon sx={{ width: "100%", height: "100%" }} />
 

@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Box, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { BookListDetail } from "../../domain/BookJSON";
 import { bookService } from "../../service/bookService";
@@ -7,48 +7,36 @@ import { authorService } from "../../service/authorService";
 import { AuthorBook } from "../../domain/AuthorJSON";
 import { LanguageCheckbox } from '../BookCreation/LanguageCheckbok/LanguageCheckbox';
 import { SaveCancelButton } from "../FolderButtons/SaveCancelButton/SaveCancel";
+import WhatshotOutlinedIcon from '@mui/icons-material/WhatshotOutlined';
+import CardMembershipRoundedIcon from '@mui/icons-material/CardMembershipRounded';
 
-export const BookDetail = ({
-    editable,
-}: {
-    editable: boolean;
-}) => {
+export const BookDetail = ({editable}: {editable: boolean}) => {
 
     const [book, setBook] = useState<BookListDetail>(new BookListDetail());
     const [author, setAuthor] = useState<AuthorBook>(new AuthorBook());
     const [authorsSystemList, setAuthorsSystemList] = useState<AuthorBook[]>([]);
-    const [languages, setLanguages] = useState<string[]>([]);
-    const params = useParams();
+    const [bestseller, setBestseller] = useState<Boolean>(book.bestSeller);
+    const [challenging, setChallenging] = useState<Boolean>(book.challenging);
 
-    const [checkedComplex, setCheckedComplex] = useState<boolean>(book.complex);
+    const params = useParams();
 
     const handleChangeSelect = (event: SelectChangeEvent) => {
         const authorId = Number(event.target.value);
         const localAuthor = authorsSystemList.find((author: AuthorBook) => author.id === authorId);
         
         if (localAuthor) {
-            setAuthor(localAuthor);  // Actualiza el objeto author directamente
+            setAuthor(localAuthor); 
         }
 
         editBook(event);
     };
 
-    const handleChangeCheckComplex = (event: ChangeEvent<HTMLInputElement>) => {
-        setCheckedComplex(event.target.checked);
-        editBook(event);
-    };
-
-    const getLanguages = async () => {
-        const languages = await authorService.getIdiomas();
-        setLanguages(languages);
-        console.log(languages);
-    };
-
     const getBook = async () => {
         const id = Number(params.id);
         const [fetchedBook, fetchedAuthor] = await bookService.getBook(id);
-
         setBook(fetchedBook);
+        setBestseller(fetchedBook.bestSeller);
+        setChallenging(fetchedBook.challenging);
         setAuthor(fetchedAuthor);
     };
 
@@ -57,26 +45,25 @@ export const BookDetail = ({
         setAuthorsSystemList(fetchedAuthors);
     };
 
-    const editBook = (
-        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
-    ) => {
-        const { name, type } = event.target;
-        const value = type === "checkbox" ? (event.target as HTMLInputElement).checked : event.target.value;
-
+    const editBook = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+        const { name, value } = event.target;
         const updatedBook = { ...book, [name]: value };
         setBook(Object.assign(new BookListDetail(), updatedBook));
-        // setBook((prevBook) => ({
-        //     ...prevBook,
-        //     [name]: value,
-        // }));
     };
+    
+    const editBookCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = event.target;
+        const updatedBook = { ...book, [name]: checked };
+        setBook(Object.assign(new BookListDetail(), updatedBook));
+    };
+    
 
     const handleLanguageChange = (selectedLanguages: string[]) => {
             const updatedBook = { ...book, translations: selectedLanguages };
             setBook(Object.assign(new BookListDetail(), updatedBook));        
     };
 
-    const confirm = async () => {
+    const confirmEdition = async () => {
         try {
             const bookJson = book.toJson(book, author); // Convertimos a JSON
             await bookService.editBook(bookJson);       // Llama a bookService con el JSON generado
@@ -86,17 +73,63 @@ export const BookDetail = ({
         }
     };
 
+    const confirmCreate = async () => {
+        try {
+            const bookCreateJson = book.toCreateJson(book, author); 
+            await bookService.createBook(bookCreateJson);   
+            console.log("Libro creado correctamente.");
+        } catch (error) {
+            console.error("Error al crear el libro:", error);
+        }
+    };
+
     useEffect(() => {
-        getLanguages();
+        setBestseller(
+            book.weeklySales > 10000 &&
+            book.numberOfEditions > 2 &&
+            book.translations.length > 5
+        );
+    
+        setChallenging(
+            book.numberOfPages > 600 &&
+            book.complex
+        );
+    }, [book.weeklySales, book.numberOfEditions, book.translations, book.numberOfPages, book.complex]);
+    
+
+    useEffect(() => {
+        getAuthors();
         if (params.id) getBook();
-        if (editable) getAuthors();
+        //if (editable) getAuthors();
     }, [params.id]);
 
     return (
         <>
             {(
-                <><Box display="flex" flexDirection="column" justifyContent="space-between"
+                <>
+                
+                <Box display="flex" flexDirection="column" justifyContent="space-between"
                     alignItems="center" gap={3} sx={{ width: 500, maxWidth: '100%' }} padding={5}>
+                    <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                        <h4>Libros</h4>
+                        </Box>
+                        <Box display="flex" flexDirection="row">
+                        {bestseller && (
+                            <IconButton
+                            sx={{ height: "4rem" }}>
+                            <CardMembershipRoundedIcon sx={{ height: "100%", width: "100%", color: "purple" }}></CardMembershipRoundedIcon>
+                        </IconButton>
+                        )}
+                        
+                        {challenging && (
+                             <IconButton
+                            sx={{ height: "4rem" }}>
+                            <WhatshotOutlinedIcon sx={{ height: "100%", width: "100%", color: "yellow" }}></WhatshotOutlinedIcon>
+                            </IconButton>
+                        )}
+                        </Box>
+                    </Box>
                     <TextField fullWidth
                         label="Title"
                         onChange={editBook}
@@ -154,8 +187,8 @@ export const BookDetail = ({
                         value={book.weeklySales || ''} />
                     <FormControlLabel
                         control={<Checkbox
-                            checked={checkedComplex}
-                            onChange={handleChangeCheckComplex}
+                            checked={book.complex}
+                            onChange={editBookCheckbox}
                             name="complex"
                             disabled={!editable} />}
                         label="complex to read" />
@@ -169,9 +202,11 @@ export const BookDetail = ({
                     <LanguageCheckbox
                         fullLanguageList={book.translations}
                         nativeLanguage={author.nacionalidad}
-                        onChange={handleLanguageChange} />
+                        onChange={handleLanguageChange}
+                        editable={editable} />
                 </Box>
-                <SaveCancelButton onClick={confirm} isBook={true} editable={editable}></SaveCancelButton></>
+                <SaveCancelButton onClick={(params.id) ? confirmEdition : confirmCreate} 
+                isBook={true} editable={editable}></SaveCancelButton></>
             )}
         </>
     );

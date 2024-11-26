@@ -2,6 +2,7 @@ import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ReplyAllIcon from '@mui/icons-material/ReplyAll';
 import SaveIcon from '@mui/icons-material/Save';
+import { SaveOutlined } from "@mui/icons-material";
 
 export const SaveCancelButton = ({ onClick, isBook, editable }: { onClick: () => void, isBook: boolean, editable: boolean }) => {
 
@@ -29,7 +30,7 @@ export const SaveCancelButton = ({ onClick, isBook, editable }: { onClick: () =>
                     </Button>
                     {editable &&
                 <Button>
-                    <SaveIcon
+                    <SaveOutlined
                         fontSize="large"
                         sx={{ color: "green", fontSize: "4rem" }}
                         onClick={confirm} 

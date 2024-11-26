@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { authorService } from "../../../service/authorService";
-import { Box, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
 export const LanguageCheckbox = ({ 
     fullLanguageList, 
     nativeLanguage,
-    onChange 
+    onChange,
+    editable
 }: { 
     fullLanguageList: string[], 
     nativeLanguage: string,
-    onChange: (selectedLanguages: string[]) => void 
+    onChange: (selectedLanguages: string[]) => void,
+    editable: boolean
 }) => {
 
     const [languagesMap, setLanguagesMap] = useState<Record<string, boolean>>({});
@@ -55,10 +57,12 @@ export const LanguageCheckbox = ({
                 ...prevMap,
                 [name]: checked,
             };
-            onChange(getSelectedLanguages());
+            // Llamar a onChange después de actualizar el mapa de lenguajes
+            onChange(Object.keys(updatedMap).filter((language) => updatedMap[language]));
             return updatedMap;
         });
     };
+    
 
     return (
         <Box>
@@ -76,7 +80,7 @@ export const LanguageCheckbox = ({
                                     checked={isChecked}
                                     onChange={handleChange}
                                     name={language}
-                                    disabled={language === nativeLanguage}
+                                    disabled={(language === nativeLanguage) || !editable}
                                 />
                             }
                             label={language}

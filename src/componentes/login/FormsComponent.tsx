@@ -36,7 +36,7 @@ export const FormsComponent = ({
         return emailIsValid && nameIsValid && usernameIsValid && passwordIsValid
     }
 
-    
+
   };
 
   const changeVisibility = () => {
@@ -69,7 +69,7 @@ export const FormsComponent = ({
       maxWidth="400px"
       mx="auto"
     >
-      
+
       {!isLoginPage && (
         <>
           <TextField
@@ -98,7 +98,6 @@ export const FormsComponent = ({
             error={isSubmitted && (!name || !/^[A-Za-zÀ-ÿ\s]+$/.test(name))}
             data-testid="name-input"
         />
-
         </>
       )}
 
@@ -112,7 +111,6 @@ export const FormsComponent = ({
         helperText={isSubmitted && !username ? 'Field is required' : ""}
         error={isSubmitted && !username}
         data-testid="username-input"
-
       />
 
       <TextField
@@ -140,7 +138,6 @@ export const FormsComponent = ({
           )
         }}
         data-testid="password-input"
-
       />
 
       {/* Botones */}

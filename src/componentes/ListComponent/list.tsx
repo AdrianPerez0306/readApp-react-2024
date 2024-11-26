@@ -13,7 +13,7 @@ import { Search } from './Search/Search';
 
 export const List = ({ selectedOption }: { selectedOption: string }) => {
     
-    const [isBook, setIsBook] = useState<boolean >(selectedOption === 'book');
+    const [isBook, setIsBook] = useState<boolean >(selectedOption === 'book'); /* seteo el booleano base */
     const [authors, setAuthors] = useState<AuthorJSON[]>([]);
     const [books, setBooks] = useState<Array<Book>>([]);
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -75,18 +75,15 @@ export const List = ({ selectedOption }: { selectedOption: string }) => {
     }
 
     const updateStateAndFetch = async () => {
-        if (selectedOption === 'book') {
-            setIsBook(true);
-        } else if (selectedOption === 'autor') {
-            setIsBook(false);
-        }
+        const variable = selectedOption === 'book';
+        setIsBook(variable);
         await fetchData();
     };
     
     useEffect( () => {
         updateStateAndFetch();
 
-    }, [selectedOption,isBook,setAuthors,setBooks]);
+    }, [selectedOption,isBook]);
 
     return (
         <>

@@ -22,8 +22,8 @@ class BookService {
     }
 
     async findBook(text: string): Promise<Book[]> {
-        const response = await axios.get(`${REST_SERVER_URL}/librosSearch/filter`, {
-            params: { filtro: text }
+        const response = await axios.get(`${REST_SERVER_URL}/bookSearch/filter`, {
+            params: { filter: text }
         });
 
         console.log(response.data);

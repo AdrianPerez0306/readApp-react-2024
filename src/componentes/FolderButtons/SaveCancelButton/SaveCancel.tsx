@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ReplyAllIcon from '@mui/icons-material/ReplyAll';
 import SaveIcon from '@mui/icons-material/Save';
 import { SaveOutlined } from "@mui/icons-material";
+import { paths } from "../../../domain/routes";
+
 
 export const SaveCancelButton = ({ onClick, isBook, editable }: { onClick: () => void, isBook: boolean, editable: boolean }) => {
 
@@ -13,9 +15,9 @@ export const SaveCancelButton = ({ onClick, isBook, editable }: { onClick: () =>
     }
     const cancel = () => {
         if (isBook) {
-            navigate("/list/book");
+            navigate(paths.list.book.path);
         } else {
-            navigate("/list/autor");
+            navigate(paths.list.autor.path);
         }
     }
 

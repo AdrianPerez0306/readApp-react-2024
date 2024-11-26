@@ -91,19 +91,57 @@ export class BookListDetail {
         
     }
 
+    toJson(dataBook: BookListDetail, dataAuthor: AuthorBook): BookListDetailJSON {
+        return {
+            id: dataBook.id,
+            title: dataBook.title,
+            author: {
+                id: dataAuthor.id,
+                nombre: dataAuthor.nombre,
+                apellido: dataAuthor.apellido,
+                nacionalidad: dataAuthor.nacionalidad,
+            },
+            numberOfPages: dataBook.numberOfPages,
+            numberOfWords: dataBook.numberOfWords,
+            translations: dataBook.translations,
+            bestSeller: dataBook.bestSeller,
+            challenging: dataBook.challenging,
+            image: dataBook.image,
+            numberOfEditions: dataBook.numberOfEditions,
+            weeklySales: dataBook.weeklySales,
+            complex: dataBook.complex,
+        };
+    }
+
+    toCreateJson (dataBook: BookListDetail, dataAuthor: AuthorBook): BookCreateJSON {
+        return {
+            title: dataBook.title,
+            author: dataAuthor.id,
+            numberOfPages: dataBook.numberOfPages,
+            numberOfWords: dataBook.numberOfWords,
+            translations: dataBook.translations,
+            image: dataBook.image,
+            numberOfEditions: dataBook.numberOfEditions,
+            weeklySales: dataBook.weeklySales,
+            complex: dataBook.complex,
+        };
+    }
+    
+
 }
 
-// export type CreateBookJSON = {
-//     id: number;
-//     title: string;
-//     author: string;
-//     numberOfPages: number;
-//     numberOfWords: number;
-//     translations: string[];
-//     bestSeller: boolean;
-//     challenging: boolean;
-// }
+export type BookCreateJSON = {
+    title: string;
+    author: number;
+    numberOfPages: number;
+    numberOfWords: number;
+    translations: string[];
+    image: string;
+    numberOfEditions: number;
+    weeklySales: number;
+    complex: boolean
+}
 
-export const BookList = new BookListDetail()
+export const BookList = new BookListDetail();
 
 export const bookJson = new Book();

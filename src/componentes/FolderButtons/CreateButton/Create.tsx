@@ -1,6 +1,5 @@
-import { red } from "@mui/material/colors";
 import "./Create.css";
-import LoupeIcon from '@mui/icons-material/Loupe';
+import { AddCircleTwoTone } from "@mui/icons-material";
 
 export const Create = ({onClick} : 
     {onClick : () => void
@@ -14,6 +13,6 @@ export const Create = ({onClick} :
 
     return (
         
-               <LoupeIcon   sx={{ fontSize: 50, color: '#ffab40'}} onClick={createNavigation}></LoupeIcon>
+               <AddCircleTwoTone   sx={{ fontSize: 50, color: '#5dba41'}} onClick={createNavigation}></AddCircleTwoTone>
     );
 }

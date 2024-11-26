@@ -1,10 +1,10 @@
-import { Box, Button, InputAdornment, TextField } from "@mui/material";
-import { useState } from "react";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import LoginIcon from '@mui/icons-material/Login';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { Box, Button, InputAdornment, TextField } from "@mui/material"
+import { useState } from "react"
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import LoginIcon from '@mui/icons-material/Login'
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 
 export const FormsComponent = ({
   isLoginPage,
@@ -13,16 +13,16 @@ export const FormsComponent = ({
   create
 }: {
   isLoginPage: boolean;
-  login: (username: string, password: string) => void;
-  changePage: () => void;
-  create: (email: string, username: string, password: string, name: string) => void;
+  login: (username: string, password: string) => void
+  changePage: () => void
+  create: (email: string, username: string, password: string, name: string) => void
 }) => {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [visibility, setVisibility] = useState<'text' | 'password'>('password');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
+  const [visibility, setVisibility] = useState<'text' | 'password'>('password')
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const isFormValid = () => {
     const emailIsValid = /^[^@]+@[^@]+\.[^@]+$/.test(email)
@@ -40,23 +40,23 @@ export const FormsComponent = ({
   };
 
   const changeVisibility = () => {
-    setVisibility(visibility === 'password' ? 'text' : 'password');
+    setVisibility(visibility === 'password' ? 'text' : 'password')
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); 
-    setIsSubmitted(true); 
+    e.preventDefault()
+    setIsSubmitted(true)
 
     if (!isFormValid()) {
-      return; 
+      return
     }
 
     if (isLoginPage) {
-      login(username, password);
+      login(username, password)
     } else {
-      create(email, username, password, name);
+      create(email, username, password, name)
     }
-  };
+  }
 
   return (
     <Box

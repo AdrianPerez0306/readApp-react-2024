@@ -50,7 +50,7 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         } else if (["numberOfEditions", "numberOfPages", "numberOfWords", "weeklySales"].includes(fieldName)) {
             if (!value || isNaN(Number(value))) {
                 error = true;
-                helperText = `${fieldName} must be a valid number.`;
+                helperText = `This field must be a valid number.`;
             }
         }
     

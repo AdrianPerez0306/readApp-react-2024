@@ -2,13 +2,14 @@ import { Box, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, M
 import { ChangeEvent, useEffect, useState } from "react";
 import { BookListDetail } from "../../domain/BookJSON";
 import { bookService } from "../../service/bookService";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { authorService } from "../../service/authorService";
 import { AuthorBook } from "../../domain/AuthorJSON";
 import { LanguageCheckbox } from '../BookCreation/LanguageCheckbok/LanguageCheckbox';
 import { SaveCancelButton } from "../FolderButtons/SaveCancelButton/SaveCancel";
 import WhatshotOutlinedIcon from '@mui/icons-material/WhatshotOutlined';
 import CardMembershipRoundedIcon from '@mui/icons-material/CardMembershipRounded';
+import { paths } from "../../domain/routes";
 
 export const BookDetail = ({editable}: {editable: boolean}) => {
 
@@ -18,7 +19,35 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
     const [bestseller, setBestseller] = useState<Boolean>(book.bestSeller);
     const [challenging, setChallenging] = useState<Boolean>(book.challenging);
 
+    const [errors, setErrors] = useState({
+        title: { error: false, helperText: "" },
+        numberOfEditions: { error: false, helperText: "" },
+        numberOfPages: { error: false, helperText: "" },
+        numberOfWords: { error: false, helperText: "" },
+        weeklySales: { error: false, helperText: "" }
+    });
+
     const params = useParams();
+    const navigate = useNavigate();
+
+    const validateField = (fieldName: string, value: string | number) => {
+        let error = false;
+        let helperText = "";
+    
+        if (fieldName === "title" && typeof value === "string") {
+            if (!value.trim()) {
+                error = true;
+                helperText = "Title cannot be empty.";
+            }
+        } else if (["numberOfEditions", "numberOfPages", "numberOfWords", "weeklySales"].includes(fieldName)) {
+            if (!value || isNaN(Number(value))) {
+                error = true;
+                helperText = `${fieldName} must be a valid number.`;
+            }
+        }
+    
+        return { error, helperText };
+    };
 
     const handleChangeSelect = (event: SelectChangeEvent) => {
         const authorId = Number(event.target.value);
@@ -38,6 +67,19 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
         setBestseller(fetchedBook.bestSeller);
         setChallenging(fetchedBook.challenging);
         setAuthor(fetchedAuthor);
+
+
+        // setBestseller(
+        //     fetchedBook.weeklySales > 10000 &&
+        //     fetchedBook.numberOfEditions > 2 &&
+        //     fetchedBook.translations.length > 5
+        // );
+
+        // setChallenging(
+        //     fetchedBook.numberOfPages > 600 &&
+        //     fetchedBook.complex
+        // );
+
     };
 
     const getAuthors = async () => {
@@ -47,9 +89,24 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
 
     const editBook = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
         const { name, value } = event.target;
+    
+        // Validar el campo
+        const { error, helperText } = validateField(name, value);
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: { error, helperText }
+        }));
+    
+        // Actualizar el libro
         const updatedBook = { ...book, [name]: value };
         setBook(Object.assign(new BookListDetail(), updatedBook));
     };
+
+    // const editBook = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+    //     const { name, value } = event.target;
+    //     const updatedBook = { ...book, [name]: value };
+    //     setBook(Object.assign(new BookListDetail(), updatedBook));
+    // };
     
     const editBookCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = event.target;
@@ -64,34 +121,61 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
     };
 
     const confirmEdition = async () => {
+        // Revisa si hay errores en alguno de los campos
+        const hasErrors = Object.values(errors).some(field => field.error);
+
+        if (hasErrors) {
+            console.log("Corrige los errores antes de guardar");
+            return;
+        }
+
         try {
-            const bookJson = book.toJson(book, author); // Convertimos a JSON
-            await bookService.editBook(bookJson);       // Llama a bookService con el JSON generado
+            const bookJson = book.toJson(book, author);
+            await bookService.editBook(bookJson);
             console.log("Libro guardado correctamente.");
+            navigate(paths.list.book.path);
         } catch (error) {
             console.error("Error al guardar el libro:", error);
         }
     };
 
     const confirmCreate = async () => {
+        const updatedErrors = {
+            title: validateField("title", book.title || ""),
+            numberOfEditions: validateField("numberOfEditions", book.numberOfEditions || ""),
+            numberOfPages: validateField("numberOfPages", book.numberOfPages || ""),
+            numberOfWords: validateField("numberOfWords", book.numberOfWords || ""),
+            weeklySales: validateField("weeklySales", book.weeklySales || "")
+        };
+        setErrors(updatedErrors);
+    
+        const hasErrors = Object.values(updatedErrors).some((field) => field.error);
+        if (hasErrors) {
+            console.error("Please correct the errors before saving.");
+            return;
+        }
+    
         try {
-            const bookCreateJson = book.toCreateJson(book, author); 
-            await bookService.createBook(bookCreateJson);   
+            const bookCreateJson = book.toCreateJson(book, author);
+            await bookService.createBook(bookCreateJson);
             console.log("Libro creado correctamente.");
+            setTimeout(() => navigate(`${paths.list.book.path}`), 1000);
         } catch (error) {
             console.error("Error al crear el libro:", error);
         }
     };
+    
 
     useEffect(() => {
         setBestseller(
-            book.weeklySales > 10000 &&
-            book.numberOfEditions > 2 &&
-            book.translations.length > 5
+            
+            book.weeklySales >= 10000 && (
+            book.numberOfEditions > 2 ||
+            book.translations.length > 5)
         );
     
         setChallenging(
-            book.numberOfPages > 600 &&
+            book.numberOfPages > 600 ||
             book.complex
         );
     }, [book.weeklySales, book.numberOfEditions, book.translations, book.numberOfPages, book.complex]);
@@ -135,7 +219,9 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                         onChange={editBook}
                         name="title"
                         disabled={!editable}
-                        value={book.title || ''} />
+                        value={book.title || ''}
+                        error={errors.title.error}
+                        helperText={errors.title.error ? errors.title.helperText : ''} />
                     <FormControl fullWidth>
                         <InputLabel id="author-select-label">Author</InputLabel>
                         <Select
@@ -159,7 +245,9 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                         onChange={editBook}
                         name="numberOfEditions"
                         disabled={!editable}
-                        value={book.numberOfEditions || ''} />
+                        value={book.numberOfEditions || ''}
+                        error={errors.numberOfEditions.error}
+                        helperText={errors.numberOfEditions.helperText} />
                     <Box display="flex" flexDirection="row" gap={3} sx={{ width: "100%" }}>
                         <TextField
                             label="Number of pages"
@@ -168,6 +256,8 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                             name="numberOfPages"
                             disabled={!editable}
                             value={book.numberOfPages || ''}
+                            error={errors.numberOfPages.error}
+                            helperText={errors.numberOfPages.helperText}
                             sx={{ width: '20rem' }} />
                         <TextField
                             label="Number of words"
@@ -176,6 +266,8 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                             name="numberOfWords"
                             disabled={!editable}
                             value={book.numberOfWords || ''}
+                            error={errors.numberOfWords.error}
+                            helperText={errors.numberOfWords.helperText}
                             sx={{ width: '20rem' }} />
                     </Box>
                     <TextField fullWidth
@@ -184,7 +276,9 @@ export const BookDetail = ({editable}: {editable: boolean}) => {
                         onChange={editBook}
                         name="weeklySales"
                         disabled={!editable}
-                        value={book.weeklySales || ''} />
+                        value={book.weeklySales || ''}
+                        error={errors.weeklySales.error}
+                        helperText={errors.weeklySales.helperText} />
                     <FormControlLabel
                         control={<Checkbox
                             checked={book.complex}

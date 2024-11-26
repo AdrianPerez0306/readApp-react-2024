@@ -33,6 +33,7 @@ main.fondo-background {
     position: relative;
     overflow: hidden;
     z-index: 1;
+    margin : 2rem
 }
 
 /* Borde animado del formulario */

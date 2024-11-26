@@ -149,6 +149,7 @@ export const FormsComponent = ({
             type="submit"
             data-testid="try-login"
             startIcon={<LoginIcon sx={{ fontSize: '70px' }} />}
+            disabled = {!isFormValid()}
           >
             <p>Login</p>
           </Button>
@@ -169,6 +170,8 @@ export const FormsComponent = ({
             color="success"
             type="submit"
             startIcon={<AccountCircleOutlinedIcon fontSize="large" />}
+            disabled = {!isFormValid()}
+
           >
             <p>Create Account</p>
           </Button>

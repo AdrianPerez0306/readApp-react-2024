@@ -1,0 +1,8 @@
+.nav-menu {
+    align-items: center;
+
+    & a button svg {
+        width: 100%;
+        height: 100%;
+    }
+}

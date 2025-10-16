@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { createTheme, CssBaseline, styled, Switch, ThemeProvider, useColorScheme } from '@mui/material';
 import './App.css'
+import { AppRouter } from './routes';
+import { useState } from 'react';
+import { blue, deepOrange, grey, red } from '@mui/material/colors';
+import { appTheme } from './AppTheme';
+import { useLocation } from 'react-router-dom';
+import { render } from 'react-dom';
+import { MaterialUISwitch } from './mui-themes/mui-switch';
+
+
+const StyledSwitchToggle = styled(Switch)(({ theme }) => ({
+    background: theme.palette.secondary.main,
+    position: 'absolute',
+    bottom: 80,
+    right: 2,
+    zIndex: 'tooltip',
+    borderRadius: '1rem',
+    transform: 'rotate(90deg)'
+}));
+
+const StyledSwitchToggleLogin = styled(Switch)(({ theme }) => ({
+    // background: theme.palette.primary.main,
+    position: 'absolute',
+    top: 180,
+    right: 20,
+    borderRadius: '1rem',
+    zIndex: 999
+}));
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+    const [mode, setMode] = useState(false);
+
+    const theme = appTheme(mode)
+
+    function handleChange() {
+        setMode(!mode)
+    }
+    return (
+        <>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <AppRouter />
+                <SwitchToggleThemeMode checked={mode} change={handleChange} />
+            </ThemeProvider>
+
+        </>
+    );
+
+
 }
 
 export default App
+
+interface SwitchToggleThemeModeProps {
+
+    checked: boolean;
+
+    change: () => void;
+
+}
+
+function SwitchToggleThemeMode(props: SwitchToggleThemeModeProps) {
+    return (
+        <>
+            {window.location.pathname != '/login'
+                ? <MaterialUISwitch checked={props.checked} onChange={props.change} ></MaterialUISwitch>
+                : <StyledSwitchToggleLogin checked={props.checked} onChange={props.change} />
+            }
+        </>
+    );
+}
